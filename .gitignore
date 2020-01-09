@@ -1,5 +1,8 @@
 .deps
 .libs
+bin
+obj
+LoaderRuntime
 Makefile.in
 aclocal.m4
 autom4te.cache
@@ -18,4 +21,3 @@ libtool
 mod_coreclr.la
 *.lo
 *.o
-				

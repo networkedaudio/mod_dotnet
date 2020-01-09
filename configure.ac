@@ -36,6 +36,7 @@ AS_VAR_COPY([$1], [pkg_cv_][$1])
 AS_VAR_IF([$1], [""], [$4], [$3])dnl
 ])# PKG_CHECK_VAR
 
+# TODO: Add PKG_CHECK_MODULE for dotnet core 3.1 sdk, or some other dependancy check since no pkg-config data is available
 PKG_CHECK_MODULES([FREESWITCH],[freeswitch],[],[])
 PKG_CHECK_VAR([moddir],[freeswitch],[modulesdir])
 PKG_CHECK_VAR([confdir],[freeswitch],[confdir])
