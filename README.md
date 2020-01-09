@@ -14,6 +14,6 @@ Build Notes:
 - Run ```./configure``` to build the Makefile
 - Temporary: Update LOADER_PATH and LOADER_RUNTIME_CONFIG_PATH in mod_coreclr.c to reflect where to find the compiled managed Loader.dll, Loader.runtimeconfig.json and Loader.deps.json files
 - Run ```make``` to build mod_coreclr
-- Run ```make install``` to install mod_coreclr.so
+- Run ```make install``` to install mod_coreclr.so to the FreeSWITCH modules directory
 - Run ```dotnet build Loader``` to build the managed Loader.dll and produce required files to the LoaderRuntime subdirectory
 - Copy files from LoaderRuntime to the LOADER_PATH directory
