@@ -17,3 +17,10 @@ Build Notes:
 - Run ```make install``` to install mod_coreclr.so to the FreeSWITCH modules directory
 - Run ```dotnet build Loader``` to build the managed Loader.dll and produce required files to the LoaderRuntime subdirectory
 - Copy files from LoaderRuntime to the LOADER_PATH directory
+
+Todo Build Notes:
+
+- Dependency check for dotnet-sdk-3.1
+- Injecting libnethost paths for Makefile.am
+- Injecting a base LOADER_PATH with directory only (somewhere near FS installed modules), the Loader is special and should not be stored with other User assemblies that are loaded later nor with the actual FS modules
+- Have default "make" target call "dotnet build Loader" and "make install" target also copy the LoaderRuntime files to the injected LOADER_PATH
