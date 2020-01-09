@@ -12,7 +12,7 @@ Build Notes:
   - If the path is different from above, update Makefile.am include correct paths
 - Run ```./bootstrap.sh``` to build configure script
 - Run ```./configure``` to build the Makefile
-- Temporary: Update LOADER_PATH and LOADER_RUNTIME_CONFIG_PATH in mod_coreclr.c to reflect where to find the compiled managed Loader
+- Temporary: Update LOADER_PATH and LOADER_RUNTIME_CONFIG_PATH in mod_coreclr.c to reflect where to find the compiled managed Loader.dll, Loader.runtimeconfig.json and Loader.deps.json files
 - Run ```make``` to build mod_coreclr
 - Run ```make install``` to install mod_coreclr.so
 - Run ```dotnet build Loader``` to build the managed Loader.dll and produce required files to the LoaderRuntime subdirectory
