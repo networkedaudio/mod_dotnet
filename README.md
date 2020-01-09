@@ -20,7 +20,7 @@ Build Notes:
 
 Todo Build Notes:
 
-- Dependency check for dotnet-sdk-3.1
-- Injecting libnethost paths for Makefile.am
+- Dependency check for dotnet-sdk-3.1, export include and libs path for libnethost and nethost.h (issue to dotnet core team to include entry in /usr/lib/pkg-config so paths can be pulled with pkg-config)
+- Update Makefile.am to use exported libnethost paths
 - Injecting a base LOADER_PATH with directory only (somewhere near FS installed modules), the Loader is special and should not be stored with other User assemblies that are loaded later nor with the actual FS modules
 - Have default "make" target call "dotnet build Loader" and "make install" target also copy the LoaderRuntime files to the injected LOADER_PATH
