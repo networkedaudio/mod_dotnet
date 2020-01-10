@@ -5,6 +5,7 @@ COREHOST_CFLAGS = -I/usr/share/dotnet/packs/Microsoft.NETCore.App.Host.linux-x64
 COREHOST_LDFLAGS = -L/usr/share/dotnet/packs/Microsoft.NETCore.App.Host.linux-x64/3.1.0/runtimes/linux-x64/native -lnethost
 
 mod_LTLIBRARIES = mod_coreclr.la
-mod_coreclr_la_SOURCES  = src/mod_coreclr.c
+mod_coreclr_la_SOURCES  = src/mod_coreclr.c src/swig.cpp
 mod_coreclr_la_CFLAGS = -I./inc $(FREESWITCH_CFLAGS) -Wall $(COREHOST_CFLAGS)
+mod_coreclr_la_CXXFLAGS = -I./inc $(FREESWITCH_CFLAGS) -Wall $(COREHOST_CFLAGS)
 mod_coreclr_la_LDFLAGS  = -avoid-version -module -no-undefined -shared $(FREESWITCH_LDFLAGS) $(COREHOST_LDFLAGS)

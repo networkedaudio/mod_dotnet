@@ -8,6 +8,8 @@ AM_PROG_CC_C_O
 
 AC_PROG_LIBTOOL
 
+AC_PROG_CXX
+
 # backwards compat with older pkg-config
 # - pull in AC_DEFUN from pkg.m4
 m4_ifndef([PKG_CHECK_VAR], [

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using FreeSWITCH;
 
 namespace FreeSWITCH
 {
@@ -26,6 +27,7 @@ namespace FreeSWITCH
         private static int OnTestHandler()
         {
             // return something unique to confirm we can call it from native code
+	    Log.WriteLine(LogLevel.Info, "Logging from managed code in OnTestHandler!");
             return 42;
         }
     }
