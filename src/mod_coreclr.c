@@ -55,6 +55,18 @@
 #define LOADER_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.dll"
 #define LOADER_RUNTIME_CONFIG_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.runtimeconfig.json"
 
+typedef int32_t (*test_callback_t)();
+
+typedef struct interface_callbacks
+{
+	test_callback_t ontest;
+} interface_callbacks_t;
+
+typedef interface_callbacks_t (*loader_entry_fn)();
+
+typedef int (*loader_test_fn)();
+
+
 SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load);
 SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_coreclr_shutdown);
 SWITCH_MODULE_DEFINITION(mod_coreclr, mod_coreclr_load, mod_coreclr_shutdown, NULL);
@@ -90,14 +102,7 @@ void *get_export(void *h, const char *name)
 }
 #endif
 
-    typedef struct lib_args
-	{
-		const char_t *message;
-		int number;
-	} lib_args_t;
-
-
-switch_bool_t load_runtime()
+switch_bool_t load_runtime(interface_callbacks_t *callbacks)
 {
 	// TODO: a dynamically obtained base path for where the Loader is loaded from
 	char_t hostfxr_path[MAX_PATH];
@@ -151,12 +156,12 @@ switch_bool_t load_runtime()
 		return SWITCH_FALSE;
 	}
 
-    interface_callbacks_t callbacks = load();
+    *callbacks = load();
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Loaded Core HostFXR Loader: %s\n", LOADER_PATH);
 
-    if (callbacks.ontest) {
-		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Uber success: %d\n", callbacks.ontest());
+    if (callbacks->ontest) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Uber success: %d\n", callbacks->ontest());
 	}
 
 	return SWITCH_TRUE;
@@ -164,19 +169,22 @@ switch_bool_t load_runtime()
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load)
 {
-	//switch_speech_interface_t *speech_interface;
-	//switch_application_interface_t *app_interface;
-	//switch_api_interface_t *api_interface;
+	interface_callbacks_t interface_callbacks;
+	switch_api_interface_t *api_interface;
 
-	if (!load_runtime()) {
-		return SWITCH_STATUS_FALSE;
-	}
-	
 	/* connect my internal structure to the blank pointer passed to me */
 	*module_interface = switch_loadable_module_create_module_interface(pool, modname);
 
+	if (!load_runtime(&interface_callbacks)) {
+		return SWITCH_STATUS_FALSE;
+	}
+
+	//	if (interface_callbacks.api) {
+	//	SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", coreclr_api_function, "<api> [<args>]");
+	//}
+	
 	/* indicate that the module should continue to be loaded */
-	return SWITCH_STATUS_SUCCESS;
+	return SWITCH_STATUS_NOUNLOAD;
 }
 
 SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_coreclr_shutdown)

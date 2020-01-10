@@ -1008,6 +1008,44 @@ public class CoreSession : global::System.IDisposable {
 }
 namespace FreeSWITCH {
 
+public partial class ManagedSession : CoreSession {
+  private global::System.Runtime.InteropServices.HandleRef swigCPtr;
+
+  internal ManagedSession(global::System.IntPtr cPtr, bool cMemoryOwn) : base(NativePINVOKE.ManagedSession_SWIGUpcast(cPtr), cMemoryOwn) {
+    swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
+  }
+
+  internal static global::System.Runtime.InteropServices.HandleRef getCPtr(ManagedSession obj) {
+    return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
+  }
+
+  protected override void Dispose(bool disposing) {
+    lock(this) {
+      if (swigCPtr.Handle != global::System.IntPtr.Zero) {
+        if (swigCMemOwn) {
+          swigCMemOwn = false;
+          NativePINVOKE.delete_ManagedSession(swigCPtr);
+        }
+        swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
+      }
+      base.Dispose(disposing);
+    }
+  }
+
+  public ManagedSession() : this(NativePINVOKE.new_ManagedSession__SWIG_0(), true) {
+  }
+
+  public ManagedSession(string uuid) : this(NativePINVOKE.new_ManagedSession__SWIG_1(uuid), true) {
+  }
+
+  public ManagedSession(SWIGTYPE_p_switch_core_session_t session) : this(NativePINVOKE.new_ManagedSession__SWIG_2(SWIGTYPE_p_switch_core_session_t.getCPtr(session)), true) {
+  }
+
+}
+
+}
+namespace FreeSWITCH {
+
 class NativePINVOKE {
 
   protected class SWIGExceptionHelper {
@@ -1673,6 +1711,21 @@ class NativePINVOKE {
 
   [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_dtmf_callback")]
   public static extern global::System.IntPtr dtmf_callback(global::System.Runtime.InteropServices.HandleRef jarg1, global::System.Runtime.InteropServices.HandleRef jarg2, global::System.Runtime.InteropServices.HandleRef jarg3, global::System.Runtime.InteropServices.HandleRef jarg4, uint jarg5);
+
+  [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_new_ManagedSession__SWIG_0")]
+  public static extern global::System.IntPtr new_ManagedSession__SWIG_0();
+
+  [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_new_ManagedSession__SWIG_1")]
+  public static extern global::System.IntPtr new_ManagedSession__SWIG_1(string jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_new_ManagedSession__SWIG_2")]
+  public static extern global::System.IntPtr new_ManagedSession__SWIG_2(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_delete_ManagedSession")]
+  public static extern void delete_ManagedSession(global::System.Runtime.InteropServices.HandleRef jarg1);
+
+  [global::System.Runtime.InteropServices.DllImport("mod_coreclr", EntryPoint="CSharp_FreeSWITCH_ManagedSession_SWIGUpcast")]
+  public static extern global::System.IntPtr ManagedSession_SWIGUpcast(global::System.IntPtr jarg1);
 }
 
 }

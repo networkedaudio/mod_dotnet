@@ -301,6 +301,7 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_Native(SWIG_CSharpStringH
 
 #include "switch.h"
 #include "switch_cpp.h"
+#include "ManagedSession.h"
 
 
 #ifdef __cplusplus
@@ -2481,6 +2482,52 @@ SWIGEXPORT void * SWIGSTDCALL CSharp_FreeSWITCH_dtmf_callback(void * jarg1, void
   return jresult;
 }
 
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FreeSWITCH_new_ManagedSession__SWIG_0() {
+  void * jresult ;
+  ManagedSession *result = 0 ;
+  
+  result = (ManagedSession *)new ManagedSession();
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FreeSWITCH_new_ManagedSession__SWIG_1(char * jarg1) {
+  void * jresult ;
+  char *arg1 = (char *) 0 ;
+  ManagedSession *result = 0 ;
+  
+  arg1 = (char *)jarg1; 
+  result = (ManagedSession *)new ManagedSession(arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void * SWIGSTDCALL CSharp_FreeSWITCH_new_ManagedSession__SWIG_2(void * jarg1) {
+  void * jresult ;
+  switch_core_session_t *arg1 = (switch_core_session_t *) 0 ;
+  ManagedSession *result = 0 ;
+  
+  arg1 = (switch_core_session_t *)jarg1; 
+  result = (ManagedSession *)new ManagedSession(arg1);
+  jresult = (void *)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void SWIGSTDCALL CSharp_FreeSWITCH_delete_ManagedSession(void * jarg1) {
+  ManagedSession *arg1 = (ManagedSession *) 0 ;
+  
+  arg1 = (ManagedSession *)jarg1; 
+  delete arg1;
+}
+
+
+SWIGEXPORT CoreSession * SWIGSTDCALL CSharp_FreeSWITCH_ManagedSession_SWIGUpcast(ManagedSession *jarg1) {
+    return (CoreSession *)jarg1;
+}
 
 #ifdef __cplusplus
 }

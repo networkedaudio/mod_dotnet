@@ -3,6 +3,7 @@
 %{
 #include "switch.h"
 #include "switch_cpp.h"
+#include "ManagedSession.h"
 %}
 
 %typemap(csclassmodifiers) ManagedSession "public partial class"
@@ -101,3 +102,4 @@
 
 
 %include switch_cpp.h
+%include ManagedSession.h
