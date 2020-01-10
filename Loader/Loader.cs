@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Runtime.InteropServices;
 using FreeSWITCH;
 
@@ -25,15 +26,20 @@ namespace FreeSWITCH
 	// This is the only predefined entry point, this must match what mod_coreclr.c is looking for
         private static NativeCallbacks Load()
         {
-	    sAPICallbacks.TryAdd("test", TestAPI);
+	    // Register some reserved Managed API's
+	    sAPIRegistry.TryAdd("load", LoadAPI);
+
+	    // Return the marshalled callbacks for the native interfaces
             return new NativeCallbacks {
 		NativeAPICallback = Marshal.GetFunctionPointerForDelegate<NativeAPICallback>(NativeAPIHandler)
 	    };
         }
 
 	// The Managed API interface callback delegate
-	public delegate bool APICallback(string args, ref string result);
-	private static ConcurrentDictionary<string, APICallback> sAPICallbacks = new ConcurrentDictionary<string, APICallback>();
+	public delegate string APICallback(string args, ManagedSession session);
+	// The Managed API callback registry
+	// TODO: value type subject to change to a more complex type including an APIAttribute configuration
+	private static ConcurrentDictionary<string, APICallback> sAPIRegistry = new ConcurrentDictionary<string, APICallback>();
 	
 	// This is the FreeSWITCH API interface callback handler which is bound to "coreclr" API commands
 	private static int NativeAPIHandler(string command, IntPtr sessionptr, IntPtr streamptr)
@@ -46,29 +52,29 @@ namespace FreeSWITCH
 	    {
 	        Log.WriteLine(LogLevel.Error, "Missing Managed API");
 		stream.Write("-ERROR Missing Managed API");
-		return 1;
+		return 0;
 	    }
 	    Log.WriteLine(LogLevel.Info, "Managed API: {0} {1}", command, args);
 
-	    if (!sAPICallbacks.TryGetValue(command.ToLower(), out APICallback callback))
+	    if (!sAPIRegistry.TryGetValue(command.ToLower(), out APICallback callback))
 	    {
 		Log.WriteLine(LogLevel.Error, "Managed API does not exist");
 		stream.Write("-ERROR Managed API does not exist");
-		return 1;
+		return 0;
 	    }
 	    string result = null;
-	    bool succeeded = false;
 	    try
 	    {
-	    	succeeded = callback(args, ref result);
+	    	result = callback(args, session);
 	    }
 	    catch (Exception)
 	    {
-	        Log.WriteLine(LogLevel.Error, "Managed API Exception");
-		// TODO: Write more of the exception data out
+		// TODO: Log more of the exception data out
+	        Log.WriteLine(LogLevel.Error, "Managed API exception");
+		result = "-ERROR Managed API exception";
 	    }
 	    if (result != null) stream.Write(result);
-	    return succeeded ? 0 : 1;
+	    return 0;
 	}
 
 	// TODO: Put this somewhere more reusable
@@ -89,11 +95,20 @@ namespace FreeSWITCH
 	    return true;
 	}
 
-	private static bool TestAPI(string args, ref string result)
+	// Managed API for loading user assemblies and reflecting on attributes to register callbacks
+	private static string LoadAPI(string args, ManagedSession session)
 	{
-	    Log.WriteLine(LogLevel.Info, "Managed TestAPI Executed");
-	    result = "+WOOHOO";
-	    return true;
+	    string path = Path.GetFullPath(args);
+	    if (!Path.HasExtension(path)) path = Path.ChangeExtension(path, ".dll");
+	    if (!File.Exists(path))
+	    {
+	        Log.WriteLine(LogLevel.Error, "File not found: {0}", path);
+		return "-ERROR File not found";
+	    }
+
+	    // TODO: Load the assembly, kick off reflection scan for relevant attributes, add API's to sAPIRegistry
+
+	    return "+OK " + path;
 	}
     }
 }
