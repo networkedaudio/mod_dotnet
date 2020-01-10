@@ -28,7 +28,6 @@
 #include <unistd.h>
 #include <limits.h>
 
-#include <mod_coreclr.h>
 #include <nethost.h>
 #include <coreclr_delegates.h>
 #include <hostfxr.h>
@@ -55,12 +54,12 @@
 #define LOADER_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.dll"
 #define LOADER_RUNTIME_CONFIG_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.runtimeconfig.json"
 
-typedef struct interface_callbacks
+typedef struct native_callbacks
 {
 	switch_api_function_t api_callback;
-} interface_callbacks_t;
+} native_callbacks_t;
 
-typedef interface_callbacks_t (*loader_load_fn)();
+typedef native_callbacks_t (*loader_load_fn)();
 
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load);
@@ -98,7 +97,7 @@ void *get_export(void *h, const char *name)
 }
 #endif
 
-switch_bool_t load_runtime(interface_callbacks_t *callbacks)
+switch_bool_t load_runtime(native_callbacks_t *callbacks)
 {
 	// TODO: a dynamically obtained base path for where the Loader is loaded from
 	char_t hostfxr_path[MAX_PATH];
@@ -161,18 +160,18 @@ switch_bool_t load_runtime(interface_callbacks_t *callbacks)
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load)
 {
-	interface_callbacks_t interface_callbacks;
+	native_callbacks_t native_callbacks = { 0 };
 	switch_api_interface_t *api_interface;
 
 	/* connect my internal structure to the blank pointer passed to me */
 	*module_interface = switch_loadable_module_create_module_interface(pool, modname);
 
-	if (!load_runtime(&interface_callbacks)) {
+	if (!load_runtime(&native_callbacks)) {
 		return SWITCH_STATUS_FALSE;
 	}
 
-	if (interface_callbacks.api_callback) {
-		SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", interface_callbacks.api_callback, "<api> [<args>]");
+	if (native_callbacks.api_callback) {
+		SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", native_callbacks.api_callback, "<api> [<args>]");
 	}
 	
 	/* indicate that the module should continue to be loaded */

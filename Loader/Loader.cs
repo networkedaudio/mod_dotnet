@@ -6,19 +6,19 @@ namespace FreeSWITCH
 {
     public sealed class Loader
     {
-        private delegate InterfaceCallbacks LoadDelegate();
+        private delegate NativeCallbacks LoadDelegate();
 
 	private delegate int APICallback(string command, IntPtr sessionptr, IntPtr streamptr);
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct InterfaceCallbacks
+        private struct NativeCallbacks
         {
 	    public IntPtr APICallback;
         }
 	
-        private static InterfaceCallbacks Load()
+        private static NativeCallbacks Load()
         {
-            return new InterfaceCallbacks {
+            return new NativeCallbacks {
 		APICallback = Marshal.GetFunctionPointerForDelegate<APICallback>(APIHandler)
 	    };
         }
