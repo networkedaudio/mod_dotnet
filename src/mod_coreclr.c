@@ -55,16 +55,12 @@
 #define LOADER_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.dll"
 #define LOADER_RUNTIME_CONFIG_PATH "/home/shane/mod_coreclr/LoaderRuntime/Loader.runtimeconfig.json"
 
-typedef int32_t (*test_callback_t)();
-
 typedef struct interface_callbacks
 {
-	test_callback_t ontest;
+	switch_api_function_t api_callback;
 } interface_callbacks_t;
 
-typedef interface_callbacks_t (*loader_entry_fn)();
-
-typedef int (*loader_test_fn)();
+typedef interface_callbacks_t (*loader_load_fn)();
 
 
 SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load);
@@ -149,7 +145,7 @@ switch_bool_t load_runtime(interface_callbacks_t *callbacks)
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Initialized Core HostFXR\n");
 
-    loader_entry_fn load = NULL;
+    loader_load_fn load = NULL;
     if (load_assembly_and_get_function_pointer(LOADER_PATH, "FreeSWITCH.Loader, Loader", "Load", "FreeSWITCH.Loader+LoadDelegate, Loader", NULL, (void**)&load) ||
 		!load) {
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unable to load loader assembly and get loader entry function pointer\n");
@@ -159,10 +155,6 @@ switch_bool_t load_runtime(interface_callbacks_t *callbacks)
     *callbacks = load();
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Loaded Core HostFXR Loader: %s\n", LOADER_PATH);
-
-    if (callbacks->ontest) {
-		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_INFO, "Uber success: %d\n", callbacks->ontest());
-	}
 
 	return SWITCH_TRUE;
 }
@@ -179,9 +171,9 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load)
 		return SWITCH_STATUS_FALSE;
 	}
 
-	//	if (interface_callbacks.api) {
-	//	SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", coreclr_api_function, "<api> [<args>]");
-	//}
+	if (interface_callbacks.api_callback) {
+		SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", interface_callbacks.api_callback, "<api> [<args>]");
+	}
 	
 	/* indicate that the module should continue to be loaded */
 	return SWITCH_STATUS_NOUNLOAD;

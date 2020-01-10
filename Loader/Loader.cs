@@ -4,31 +4,34 @@ using FreeSWITCH;
 
 namespace FreeSWITCH
 {
-    // TODO: Need to have types from SWIG available here through an assembly reference that will be marshalled through callbacks
     public sealed class Loader
     {
-        public delegate InterfaceCallbacks LoadDelegate();
+        private delegate InterfaceCallbacks LoadDelegate();
 
-	public delegate int TestCallback();
+	private delegate int APICallback(string command, IntPtr sessionptr, IntPtr streamptr);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct InterfaceCallbacks
+        private struct InterfaceCallbacks
         {
-            public IntPtr OnTest;
+	    public IntPtr APICallback;
         }
 	
-        public static InterfaceCallbacks Load()
+        private static InterfaceCallbacks Load()
         {
             return new InterfaceCallbacks {
-	        OnTest = Marshal.GetFunctionPointerForDelegate<TestCallback>(OnTestHandler)
+		APICallback = Marshal.GetFunctionPointerForDelegate<APICallback>(APIHandler)
 	    };
         }
 
-        private static int OnTestHandler()
-        {
-            // return something unique to confirm we can call it from native code
-	    Log.WriteLine(LogLevel.Info, "Logging from managed code in OnTestHandler!");
-            return 42;
-        }
+	private static int APIHandler(string command, IntPtr sessionptr, IntPtr streamptr)
+	{
+	    using ManagedSession session = new ManagedSession(new SWIGTYPE_p_switch_core_session_t(sessionptr, false));
+	    using Stream stream = new Stream(new SWIGTYPE_p_switch_stream_handle_t(streamptr, false));
+
+	    Log.WriteLine(LogLevel.Info, "Managed API: {0}", command);
+
+	    stream.Write("+WOOT");
+	    return 0;
+	}
     }
 }
