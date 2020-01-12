@@ -57,6 +57,7 @@
 typedef struct native_callbacks
 {
 	switch_api_function_t api_callback;
+	switch_application_function_t app_callback;
 } native_callbacks_t;
 
 typedef native_callbacks_t (*loader_load_fn)();
@@ -66,6 +67,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load);
 SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_coreclr_shutdown);
 SWITCH_MODULE_DEFINITION(mod_coreclr, mod_coreclr_load, mod_coreclr_shutdown, NULL);
 
+// TODO: replace this with switch_dso_open etc
 void *load_library(const char_t *);
 void *get_export(void *, const char *);
 
@@ -162,6 +164,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load)
 {
 	native_callbacks_t native_callbacks = { 0 };
 	switch_api_interface_t *api_interface;
+	switch_application_interface_t *app_interface;
 
 	/* connect my internal structure to the blank pointer passed to me */
 	*module_interface = switch_loadable_module_create_module_interface(pool, modname);
@@ -172,6 +175,9 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_coreclr_load)
 
 	if (native_callbacks.api_callback) {
 		SWITCH_ADD_API(api_interface, "coreclr", "Run a coreclr api", native_callbacks.api_callback, "<api> [<args>]");
+	}
+	if (native_callbacks.app_callback) {
+		SWITCH_ADD_APP(app_interface, "coreclr", "Run a coreclr app", "Run a coreclr application in a channel", native_callbacks.app_callback, "<app> [<args>]", SAF_SUPPORT_NOMEDIA);
 	}
 	
 	/* indicate that the module should continue to be loaded */

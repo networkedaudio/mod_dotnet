@@ -14,6 +14,9 @@ namespace FreeSWITCH
 	// The FreeSWITCH API interface callback delegate
 	private delegate int NativeAPICallback(string command, IntPtr sessionptr, IntPtr streamptr);
 
+	// The FreeSWITCH APP interface callback delegate
+	private delegate void NativeAPPCallback(IntPtr sessionptr, string data);
+
 	// Contains all native callbacks that will be called from the native host, each callback
 	// is produced by marshalling delegates to native function pointers
 	// Important: Must maintain the same structure in native_callbacks_t in mod_coreclr.c
@@ -21,6 +24,7 @@ namespace FreeSWITCH
         private struct NativeCallbacks
         {
 	    public IntPtr NativeAPICallback;
+	    public IntPtr NativeAPPCallback;
         }
 
 	// This is the only predefined entry point, this must match what mod_coreclr.c is looking for
@@ -31,7 +35,8 @@ namespace FreeSWITCH
 
 	    // Return the marshalled callbacks for the native interfaces
             return new NativeCallbacks {
-		NativeAPICallback = Marshal.GetFunctionPointerForDelegate<NativeAPICallback>(NativeAPIHandler)
+		NativeAPICallback = Marshal.GetFunctionPointerForDelegate<NativeAPICallback>(NativeAPIHandler),
+		NativeAPPCallback = Marshal.GetFunctionPointerForDelegate<NativeAPPCallback>(NativeAPPHandler)
 	    };
         }
 
@@ -75,6 +80,41 @@ namespace FreeSWITCH
 	    }
 	    if (result != null) stream.Write(result);
 	    return 0;
+	}
+
+	// The Managed APP interface callback delegate
+	public delegate void APPCallback(string args, ManagedSession session);
+	// The Managed APP callback registry
+	// TODO: value type subject to change to a more complex type including an APPAttribute configuration
+	private static ConcurrentDictionary<string, APPCallback> sAPPRegistry = new ConcurrentDictionary<string, APPCallback>();
+	
+	// This is the FreeSWITCH APP interface callback handler which is bound to "coreclr" APP commands
+	private static void NativeAPPHandler(IntPtr sessionptr, string data)
+	{
+	    using ManagedSession session = new ManagedSession(new SWIGTYPE_p_switch_core_session_t(sessionptr, false));
+
+	    string args = data;
+	    if (!ParseArgument(ref args, out string command, ' '))
+	    {
+	        Log.WriteLine(LogLevel.Error, "Missing Managed APP");
+		return;
+	    }
+	    Log.WriteLine(LogLevel.Info, "Managed APP: {0} {1}", command, args);
+
+	    if (!sAPPRegistry.TryGetValue(command.ToLower(), out APPCallback callback))
+	    {
+		Log.WriteLine(LogLevel.Error, "Managed APP does not exist");
+		return;
+	    }
+	    try
+	    {
+	    	callback(args, session);
+	    }
+	    catch (Exception)
+	    {
+		// TODO: Log more of the exception data out
+	        Log.WriteLine(LogLevel.Error, "Managed APP exception");
+	    }
 	}
 
 	// TODO: Put this somewhere more reusable
