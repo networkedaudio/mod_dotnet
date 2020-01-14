@@ -103,3 +103,4 @@
 
 %include switch_cpp.h
 %include ManagedSession.h
+

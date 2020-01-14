@@ -17,6 +17,9 @@ namespace FreeSWITCH
 	// The FreeSWITCH APP interface callback delegate
 	private delegate void NativeAPPCallback(IntPtr sessionptr, string data);
 
+	// The FreeSWITCH APP interface callback delegate
+	private delegate string NativeXMLCallback(string section, string tag, string key, string value, IntPtr eventptr);
+
 	// Contains all native callbacks that will be called from the native host, each callback
 	// is produced by marshalling delegates to native function pointers
 	// Important: Must maintain the same structure in native_callbacks_t in mod_coreclr.c
@@ -25,6 +28,7 @@ namespace FreeSWITCH
         {
 	    public IntPtr NativeAPICallback;
 	    public IntPtr NativeAPPCallback;
+	    public IntPtr NativeXMLCallback;
         }
 
 	// This is the only predefined entry point, this must match what mod_coreclr.c is looking for
@@ -36,7 +40,8 @@ namespace FreeSWITCH
 	    // Return the marshalled callbacks for the native interfaces
             return new NativeCallbacks {
 		NativeAPICallback = Marshal.GetFunctionPointerForDelegate<NativeAPICallback>(NativeAPIHandler),
-		NativeAPPCallback = Marshal.GetFunctionPointerForDelegate<NativeAPPCallback>(NativeAPPHandler)
+		NativeAPPCallback = Marshal.GetFunctionPointerForDelegate<NativeAPPCallback>(NativeAPPHandler),
+		NativeXMLCallback = Marshal.GetFunctionPointerForDelegate<NativeXMLCallback>(NativeXMLHandler)
 	    };
         }
 
@@ -115,6 +120,21 @@ namespace FreeSWITCH
 		// TODO: Log more of the exception data out
 	        Log.WriteLine(LogLevel.Error, "Managed APP exception");
 	    }
+	}
+
+	// The Managed XML interface callback delegate
+	public delegate void XMLCallback(string section, string tag, string key, string value, Event evt, ref string result);
+
+	public static event XMLCallback OnXMLSearch;
+
+	// This is the FreeSWITCH XML interface callback handler
+	private static string NativeXMLHandler(string section, string tag, string key, string value, IntPtr eventptr)
+	{
+	    using Event evt = new Event(new SWIGTYPE_p_switch_event_t(eventptr, false), 0);
+	    Log.WriteLine(LogLevel.Info, "Managed XML Handler: {0} - {1} - {2} - {3}", section, tag, key, value);
+	    string result = null;
+	    OnXMLSearch?.Invoke(section, tag, key, value, evt, ref result);
+	    return result;
 	}
 
 	// TODO: Put this somewhere more reusable
