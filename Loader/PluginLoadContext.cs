@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 
-namespace LoaderModule
+namespace FreeSWITCH
 {
     public class PluginLoadContext : AssemblyLoadContext
     {

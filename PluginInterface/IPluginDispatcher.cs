@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FreeSWITCH;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,9 +9,9 @@ namespace PluginInterface
     {
         bool Onload();
 
-        void DispatchDialPlan();
+        void DispatchDialPlan(string args, ManagedSession session);
 
-        void DispatchAPI();
+        void DispatchAPI(string args, ManagedSession session);
 
         IEnumerable<string> GetApiNames();
 

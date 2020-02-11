@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace LoaderModule
+namespace FreeSWITCH
 {
     public static class PluginsContainer
     {
@@ -50,27 +50,27 @@ namespace LoaderModule
             }
         }
 
-        public static bool DispatchAPI(string cmd)
+        public static bool DispatchAPI(string args, ManagedSession session)
         {
-            var args = cmd.Trim().Split(" ".ToCharArray());
-            var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetApiNames().Contains(args[0]));
+            var argTokens = args.Trim().Split(" ".ToCharArray());
+            var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetApiNames().Contains(argTokens[0]));
             if (dispatcher == null)
             {
                 return false;
             }
-            dispatcher.DispatchAPI();
+            dispatcher.DispatchAPI(args, session);
             return true;
         }
 
-        public static bool DispatchDialPlanApp(string appArgs)
+        public static bool DispatchDialPlanApp(string args, ManagedSession session)
         {
-            var args = appArgs.Trim().Split(" ".ToCharArray());
-            var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetDPNames().Contains(args[0]));
+            var argTokens = args.Trim().Split(" ".ToCharArray());
+            var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetDPNames().Contains(argTokens[0]));
             if (dispatcher == null)
             {
                 return false;
             }
-            dispatcher.DispatchDialPlan();
+            dispatcher.DispatchDialPlan(args, session);
             return true;
         }
 
