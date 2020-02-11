@@ -9,9 +9,14 @@
       <AllOutputs Include="$(OutputPath)$(MSBuildProjectName).dll" />
       <AllOutputs Include="$(OutputPath)$(MSBuildProjectName).runtimeconfig.json" />
       <AllOutputs Include="$(OutputPath)$(MSBuildProjectName).deps.json" />
+      <AllOutputs Include="$(OutputPath)PluginInterface.dll" />
     </ItemGroup>
 
     <Copy SourceFiles="@(AllOutputs)" DestinationFolder="$(MSBuildProjectDirectory)/../LoaderRuntime" />
   </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluginInterface\PluginInterface.csproj" />
+  </ItemGroup>
 
 </Project>
