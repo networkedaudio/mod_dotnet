@@ -50,7 +50,7 @@ namespace FreeSWITCH
             }
         }
 
-        public static bool DispatchAPI(string args, ManagedSession session)
+        public static bool DispatchAPI(string args, Stream stream, ManagedSession session)
         {
             var argTokens = args.Trim().Split(" ".ToCharArray());
             var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetApiNames().Contains(argTokens[0]));
@@ -58,7 +58,7 @@ namespace FreeSWITCH
             {
                 return false;
             }
-            dispatcher.DispatchAPI(args, session);
+            dispatcher.DispatchAPI(args, stream, session);
             return true;
         }
 
