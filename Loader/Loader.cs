@@ -103,6 +103,9 @@ namespace FreeSWITCH
         {
             using ManagedSession session = new ManagedSession(new SWIGTYPE_p_switch_core_session_t(sessionptr, false));
 
+            PluginsContainer.DispatchDialPlanApp(data, session);
+            return;
+
             string args = data;
             if (!ParseArgument(ref args, out string command, ' '))
             {
