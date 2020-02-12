@@ -50,16 +50,16 @@ namespace FreeSWITCH
             }
         }
 
-        public static bool DispatchAPI(string args, Stream stream, ManagedSession session)
+        public static int DispatchAPI(string args, Stream stream, ManagedSession session)
         {
             var argTokens = args.Trim().Split(" ".ToCharArray());
             var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetApiNames().Contains(argTokens[0]));
             if (dispatcher == null)
             {
-                return false;
+                Log.WriteLine(LogLevel.Info, $"mod_coreclr unknown dotnet command: {args}");
+                return 0;
             }
-            dispatcher.DispatchAPI(args, stream, session);
-            return true;
+            return dispatcher.DispatchAPI(args, stream, session);
         }
 
         public static bool DispatchDialPlanApp(string args, ManagedSession session)

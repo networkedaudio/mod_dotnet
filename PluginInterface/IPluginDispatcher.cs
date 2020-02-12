@@ -11,7 +11,7 @@ namespace PluginInterface
 
         void DispatchDialPlan(string args, ManagedSession session);
 
-        void DispatchAPI(string args, Stream stream, ManagedSession session);
+        int DispatchAPI(string args, Stream stream, ManagedSession session);
 
         IEnumerable<string> GetApiNames();
 

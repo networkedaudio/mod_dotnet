@@ -58,6 +58,10 @@ namespace FreeSWITCH
             using ManagedSession session = new ManagedSession(new SWIGTYPE_p_switch_core_session_t(sessionptr, false));
             using Stream stream = new Stream(new SWIGTYPE_p_switch_stream_handle_t(streamptr, false));
 
+
+            // for now just call other dispatcher and return Todo: remove the rest of this code
+            return PluginsContainer.DispatchAPI(command, stream, session);
+
             string args = command;
             if (!ParseArgument(ref args, out command, ' '))
             {
