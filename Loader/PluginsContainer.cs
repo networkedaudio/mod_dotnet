@@ -74,6 +74,19 @@ namespace FreeSWITCH
             return true;
         }
 
+        public static string DispatchXMLCallback(string section, string tag, string key, string value, Event evt)
+        {
+            foreach ( var dispatcher in pluginLoadContexts.SelectMany(c => c.Dispatchers))
+            {
+                var result = dispatcher.DispatchXMLCallback(section, tag, key, value, evt);
+                if (!string.IsNullOrEmpty(result))
+                {
+                    return result;
+                }
+            }
+            return null;
+        }
+
         private static void BuildDispatchers(Assembly assembly, PluginLoadContext context)
         {
             foreach (Type type in assembly.GetTypes())

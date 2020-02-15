@@ -140,9 +140,7 @@ namespace FreeSWITCH
         {
             using Event evt = new Event(new SWIGTYPE_p_switch_event_t(eventptr, false), 0);
             Log.WriteLine(LogLevel.Info, "Managed XML Handler: {0} - {1} - {2} - {3}", section, tag, key, value);
-            string result = null;
-            OnXMLSearch?.Invoke(section, tag, key, value, evt, ref result);
-            return result;
+            return PluginsContainer.DispatchXMLCallback(section, tag, key, value, evt);
         }
 
         // TODO: Put this somewhere more reusable
