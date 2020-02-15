@@ -13,6 +13,8 @@ namespace PluginInterface
 
         int DispatchAPI(string args, Stream stream, ManagedSession session);
 
+        string DispatchXMLCallback(string section, string tag, string key, string value, Event evt);
+
         IEnumerable<string> GetApiNames();
 
         IEnumerable<string> GetDPNames();
