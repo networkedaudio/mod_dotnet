@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Loader", "Loader\Loader.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PluginInterface", "PluginInterface\PluginInterface.csproj", "{D0F67ADF-2C50-4B97-8049-CFD07A99DBAA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SamplePlugins", "SamplePlugins", "{264DF5AC-2FFD-467C-B26C-14559AF6FE37}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

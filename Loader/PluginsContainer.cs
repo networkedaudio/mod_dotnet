@@ -53,6 +53,13 @@ namespace FreeSWITCH
         public static int DispatchAPI(string args, Stream stream, ManagedSession session)
         {
             var argTokens = args.Trim().Split(" ".ToCharArray());
+            if (string.Equals(argTokens[0], "loadall", StringComparison.OrdinalIgnoreCase))
+            {
+                var myLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                LoadPluginsFromSubDirs(myLocation);
+                return 0;
+            }
+
             var dispatcher = pluginLoadContexts.SelectMany(c => c.Dispatchers).FirstOrDefault(d => d.GetApiNames().Contains(argTokens[0]));
             if (dispatcher == null)
             {
