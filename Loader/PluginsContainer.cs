@@ -16,6 +16,7 @@ namespace FreeSWITCH
         public static bool LoadPlugin(string pluginPath)
         {
             var pluginLocation = Path.GetFullPath(pluginPath.Replace('\\', Path.DirectorySeparatorChar));
+            Log.WriteLine(LogLevel.Console, $"Loader: Attempting to load module {pluginLocation}");
             var loadContext = new PluginLoadContext(pluginLocation);
             var aname = new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation));
             var loadedAssembly = loadContext.LoadFromAssemblyName(aname);

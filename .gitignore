@@ -26,3 +26,4 @@ mod_coreclr.la
 /.vs/Managed/v16
 /Loader/.vs/Loader/DesignTimeBuild/.dtbcache
 *.dtbcache
+*.user
