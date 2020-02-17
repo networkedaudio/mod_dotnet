@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using PluginInterface;
 using FreeSWITCH.Helpers;
+using System.Reflection;
 
 namespace FreeSWITCH
 {
@@ -41,6 +42,8 @@ namespace FreeSWITCH
             var temp = new fsNotFoundDocument();
             var bar = temp.ToXMLString();
             Log.WriteLine(LogLevel.Console, $"Got it xmldoc is \n {bar}");
+            var myLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            PluginsContainer.LoadPluginsFromSubDirs(myLocation);
 
             // Return the marshalled callbacks for the native interfaces
             return new NativeCallbacks
