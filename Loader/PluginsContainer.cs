@@ -99,6 +99,7 @@ namespace FreeSWITCH
         {
             foreach (Type type in assembly.GetTypes())
             {
+                Log.WriteLine(LogLevel.Console, $"Trying type {type.Name}");
                 if (typeof(IPluginDispatcher).IsAssignableFrom(type))
                 {
                     IPluginDispatcher result = Activator.CreateInstance(type) as IPluginDispatcher;
