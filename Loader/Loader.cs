@@ -2,7 +2,8 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Runtime.InteropServices;
-using FreeSWITCH;
+using PluginInterface;
+using FreeSWITCH.Helpers;
 
 namespace FreeSWITCH
 {
@@ -35,7 +36,11 @@ namespace FreeSWITCH
         public static NativeCallbacks Load()
         {
             // Register some reserved Managed API's
-            sAPIRegistry.TryAdd("load", LoadAPI);
+            //sAPIRegistry.TryAdd("load", LoadAPI);
+            Log.WriteLine(LogLevel.Console, "Trying to new up an object in another dll");
+            var temp = new fsNotFoundDocument();
+            var bar = temp.ToXMLString();
+            Log.WriteLine(LogLevel.Console, $"Got it xmldoc is \n {bar}");
 
             // Return the marshalled callbacks for the native interfaces
             return new NativeCallbacks
