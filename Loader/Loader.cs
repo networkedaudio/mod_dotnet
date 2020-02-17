@@ -24,7 +24,7 @@ namespace FreeSWITCH
         // is produced by marshalling delegates to native function pointers
         // Important: Must maintain the same structure in native_callbacks_t in mod_coreclr.c
         [StructLayout(LayoutKind.Sequential)]
-        private struct NativeCallbacks
+        public struct NativeCallbacks
         {
             public IntPtr NativeAPICallback;
             public IntPtr NativeAPPCallback;
@@ -32,7 +32,7 @@ namespace FreeSWITCH
         }
 
         // This is the only predefined entry point, this must match what mod_coreclr.c is looking for
-        private static NativeCallbacks Load()
+        public static NativeCallbacks Load()
         {
             // Register some reserved Managed API's
             sAPIRegistry.TryAdd("load", LoadAPI);
