@@ -17,6 +17,8 @@ namespace SimpleXMLDP
 
         public void DispatchDialPlan(string args, ManagedSession session)
         {
+            session.Answer();
+            session.sleep(2000, 0);
             session.StreamFile("/testsounds/clrtest.wav", 0);
             session.Hangup("NORMAL_CLEARING");
         }
@@ -48,8 +50,6 @@ namespace SimpleXMLDP
                     l.Add("sleep,2000");
                     l.Add("ring_ready");
                     l.Add("sleep,6000");
-                    l.Add("answer");
-                    l.Add("sleep,5000");
                     l.Add("dotnet,demo1");
                     return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
 
