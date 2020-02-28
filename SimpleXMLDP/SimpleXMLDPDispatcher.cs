@@ -28,6 +28,23 @@ namespace SimpleXMLDP
             var ani = evt.GetHeader("Hunt-ANI"); // The ANI/CallerID number
 
             Log.WriteLine(LogLevel.Console, $"SimpleXMLDP: lookup ctx = {context} dest = {destination} ani = {ani}");
+
+            switch (destination)
+            {
+                case "1111":
+                    var l = new List<string>();
+                    l.Add("sleep,2000");
+                    l.Add("ring_ready");
+                    l.Add("sleep,6000");
+                    l.Add("answer");
+                    l.Add("sleep,5000");
+                    l.Add("hangup,NORMAL_CLEARING");
+                    return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
+
+                default:
+                    break;
+            }
+
             return null;
 
         }
