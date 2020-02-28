@@ -11,7 +11,8 @@ namespace SimpleXMLDP
     {
         public int DispatchAPI(string args, Stream stream, ManagedSession session)
         {
-            throw new NotImplementedException();
+            stream.Write($"Test module api dispatcher args: {args}\n\n");
+            return 0;
         }
 
         public void DispatchDialPlan(string args, ManagedSession session)
@@ -51,7 +52,7 @@ namespace SimpleXMLDP
 
         public IEnumerable<string> GetApiNames()
         {
-            return Enumerable.Empty<string>();
+            return new[] { "test1", "test2" };
         }
 
         public IEnumerable<string> GetDPNames()
