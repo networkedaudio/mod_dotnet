@@ -17,7 +17,8 @@ namespace SimpleXMLDP
 
         public void DispatchDialPlan(string args, ManagedSession session)
         {
-            throw new NotImplementedException();
+            session.StreamFile("/testsounds/clrtest.wav", 0);
+            session.Hangup("NORMAL_CLEARING");
         }
 
         public string DispatchXMLCallback(string section, string tag, string key, string value, Event evt)
@@ -42,6 +43,16 @@ namespace SimpleXMLDP
                     l.Add("hangup,NORMAL_CLEARING");
                     return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
 
+                case "2222":
+                    l = new List<string>();
+                    l.Add("sleep,2000");
+                    l.Add("ring_ready");
+                    l.Add("sleep,6000");
+                    l.Add("answer");
+                    l.Add("sleep,5000");
+                    l.Add("dotnet,demo1");
+                    return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
+
                 default:
                     break;
             }
@@ -57,7 +68,7 @@ namespace SimpleXMLDP
 
         public IEnumerable<string> GetDPNames()
         {
-            return Enumerable.Empty<string>();
+            return new[] { "demo1" };
         }
 
         public bool Onload()
