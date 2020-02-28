@@ -21,8 +21,8 @@ namespace FreeSWITCH
         {
             var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
 
-            var pluginAssembly =  (assemblyPath != null ? LoadFromAssemblyPath(assemblyPath) : null);
-            return pluginAssembly;
+            return (assemblyPath != null ? LoadFromAssemblyPath(assemblyPath)
+                : AssemblyLoadContext.GetLoadContext(typeof(PluginLoadContext).Assembly).LoadFromAssemblyName(assemblyName));
         }
 
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
