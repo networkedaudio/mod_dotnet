@@ -38,10 +38,6 @@ namespace FreeSWITCH
         {
             // Register some reserved Managed API's
             //sAPIRegistry.TryAdd("load", LoadAPI);
-            Log.WriteLine(LogLevel.Console, "Trying to new up an object in another dll");
-            var temp = new fsNotFoundDocument();
-            var bar = temp.ToXMLString();
-            Log.WriteLine(LogLevel.Console, $"Got it xmldoc is \n {bar}");
             //var myLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //PluginsContainer.LoadPluginsFromSubDirs(myLocation);
 
@@ -70,34 +66,6 @@ namespace FreeSWITCH
             // for now just call other dispatcher and return Todo: remove the rest of this code
             return PluginsContainer.DispatchAPI(command, stream, session);
 
-            string args = command;
-            if (!ParseArgument(ref args, out command, ' '))
-            {
-                Log.WriteLine(LogLevel.Error, "Missing Managed API");
-                stream.Write("-ERROR Missing Managed API");
-                return 0;
-            }
-            Log.WriteLine(LogLevel.Info, "Managed API: {0} {1}", command, args);
-
-            if (!sAPIRegistry.TryGetValue(command.ToLower(), out APICallback callback))
-            {
-                Log.WriteLine(LogLevel.Error, "Managed API does not exist");
-                stream.Write("-ERROR Managed API does not exist");
-                return 0;
-            }
-            string result = null;
-            try
-            {
-                result = callback(args, session);
-            }
-            catch (Exception)
-            {
-                // TODO: Log more of the exception data out
-                Log.WriteLine(LogLevel.Error, "Managed API exception");
-                result = "-ERROR Managed API exception";
-            }
-            if (result != null) stream.Write(result);
-            return 0;
         }
 
         // The Managed APP interface callback delegate
@@ -114,28 +82,6 @@ namespace FreeSWITCH
             PluginsContainer.DispatchDialPlanApp(data, session);
             return;
 
-            string args = data;
-            if (!ParseArgument(ref args, out string command, ' '))
-            {
-                Log.WriteLine(LogLevel.Error, "Missing Managed APP");
-                return;
-            }
-            Log.WriteLine(LogLevel.Info, "Managed APP: {0} {1}", command, args);
-
-            if (!sAPPRegistry.TryGetValue(command.ToLower(), out APPCallback callback))
-            {
-                Log.WriteLine(LogLevel.Error, "Managed APP does not exist");
-                return;
-            }
-            try
-            {
-                callback(args, session);
-            }
-            catch (Exception)
-            {
-                // TODO: Log more of the exception data out
-                Log.WriteLine(LogLevel.Error, "Managed APP exception");
-            }
         }
 
         // The Managed XML interface callback delegate
@@ -147,42 +93,8 @@ namespace FreeSWITCH
         private static string NativeXMLHandler(string section, string tag, string key, string value, IntPtr eventptr)
         {
             using Event evt = new Event(new SWIGTYPE_p_switch_event_t(eventptr, false), 0);
-            Log.WriteLine(LogLevel.Info, "Managed XML Handler: {0} - {1} - {2} - {3}", section, tag, key, value);
+            //Log.WriteLine(LogLevel.Info, "Managed XML Handler: {0} - {1} - {2} - {3}", section, tag, key, value);
             return PluginsContainer.DispatchXMLCallback(section, tag, key, value, evt);
-        }
-
-        // TODO: Put this somewhere more reusable
-        private static bool ParseArgument(ref string args, out string arg, char separator)
-        {
-            args = args.Trim();
-            int eoa = args.IndexOf(separator);
-            arg = null;
-            if (eoa < 0)
-            {
-                string tmp = args;
-                args = string.Empty;
-                if (tmp.Length > 0) arg = tmp;
-                return arg != null;
-            }
-            arg = args.Substring(0, eoa);
-            args = args.Remove(0, eoa + 1).Trim();
-            return true;
-        }
-
-        // Managed API for loading user assemblies and reflecting on attributes to register callbacks
-        private static string LoadAPI(string args, ManagedSession session)
-        {
-            string path = Path.GetFullPath(args);
-            if (!Path.HasExtension(path)) path = Path.ChangeExtension(path, ".dll");
-            if (!File.Exists(path))
-            {
-                Log.WriteLine(LogLevel.Error, "File not found: {0}", path);
-                return "-ERROR File not found";
-            }
-
-            // TODO: Load the assembly, kick off reflection scan for relevant attributes, add API's to sAPIRegistry
-
-            return "+OK " + path;
         }
     }
 }
