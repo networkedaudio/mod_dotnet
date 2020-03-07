@@ -73,6 +73,7 @@ namespace SimpleXMLDP
 
         public bool Onload()
         {
+            Log.WriteLine(LogLevel.Console, "Plugin SimpleXMLDP loaded in OnLoad()");
             return true;
         }
     }

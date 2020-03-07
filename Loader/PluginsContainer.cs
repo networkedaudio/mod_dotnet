@@ -84,7 +84,7 @@ namespace FreeSWITCH
 
         public static string DispatchXMLCallback(string section, string tag, string key, string value, Event evt)
         {
-            foreach ( var dispatcher in pluginLoadContexts.SelectMany(c => c.Dispatchers))
+            foreach (var dispatcher in pluginLoadContexts.SelectMany(c => c.Dispatchers))
             {
                 var result = dispatcher.DispatchXMLCallback(section, tag, key, value, evt);
                 if (!string.IsNullOrEmpty(result))
@@ -105,7 +105,17 @@ namespace FreeSWITCH
                     IPluginDispatcher result = Activator.CreateInstance(type) as IPluginDispatcher;
                     if (result != null)
                     {
-                        context.Dispatchers.Add(result);
+                        try
+                        {
+                            if (result.Onload())
+                            {
+                                context.Dispatchers.Add(result);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Log.WriteLine(LogLevel.Error, $"Exception in OnLoad() {e.Message}");
+                        }
                     }
                 }
             }
