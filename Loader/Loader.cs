@@ -87,7 +87,7 @@ namespace FreeSWITCH
         // The Managed XML interface callback delegate
         public delegate void XMLCallback(string section, string tag, string key, string value, Event evt, ref string result);
 
-        public static event XMLCallback OnXMLSearch;
+        // public static event XMLCallback OnXMLSearch;
 
         // This is the FreeSWITCH XML interface callback handler
         private static string NativeXMLHandler(string section, string tag, string key, string value, IntPtr eventptr)
