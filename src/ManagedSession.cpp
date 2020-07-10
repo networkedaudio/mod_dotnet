@@ -39,7 +39,7 @@ void ManagedSession::check_hangup_hook()
 
 switch_status_t ManagedSession::run_dtmf_callback(void* input, switch_input_type_t itype)
 {
-		if (cb_state.function == NULL || itype != switch_input_type_t.SWITCH_INPUT_TYPE_DTMF) {
+		if (cb_state.function == NULL || itype != SWITCH_INPUT_TYPE_DTMF) {
 			return SWITCH_STATUS_FALSE;;
 		}
 	char* result = ((inputFunction)cb_state.function)((char*)input);
