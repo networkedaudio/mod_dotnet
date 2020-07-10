@@ -45,7 +45,8 @@ switch_status_t ManagedSession::run_dtmf_callback(void* input, switch_input_type
 	char* result = ((inputFunction)cb_state.function)((char*)input);
 	switch_status_t status = process_callback_result(result);
 
-	RESULT_FREE(result);
+	// This this need to be done for coreclr?
+	//RESULT_FREE(result);
 
 	return status;
 
