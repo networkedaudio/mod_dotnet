@@ -1898,7 +1898,7 @@ namespace FreeSWITCH {
 public class SWIGTYPE_p_void {
   private global::System.Runtime.InteropServices.HandleRef swigCPtr;
 
-  internal SWIGTYPE_p_void(global::System.IntPtr cPtr, bool futureUse) {
+  public  SWIGTYPE_p_void(global::System.IntPtr cPtr, bool futureUse) {
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
 

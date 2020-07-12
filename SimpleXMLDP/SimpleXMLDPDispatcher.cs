@@ -3,12 +3,14 @@ using PluginInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SimpleXMLDP
 {
     public class SimpleXMLDPDispatcher : IPluginDispatcher
     {
+        private delegate string InputCallback(string dtmf);
         public int DispatchAPI(string args, Stream stream, ManagedSession session)
         {
             stream.Write($"Test module api dispatcher args: {args}\n\n");
@@ -18,9 +20,17 @@ namespace SimpleXMLDP
         public void DispatchDialPlan(string args, ManagedSession session)
         {
             session.Answer();
+            var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(dtmfCallback);
+            session.setDTMFCallback(new SWIGTYPE_p_void(cb, false), string.Empty);
             session.sleep(2000, 0);
             session.StreamFile("/testsounds/clrtest.wav", 0);
             session.Hangup("NORMAL_CLEARING");
+        }
+
+        private string dtmfCallback(string digit)
+        {
+            Log.WriteLine(LogLevel.Info, $"Received dtmf {digit}\n");
+            return "break;";
         }
 
         public string DispatchXMLCallback(string section, string tag, string key, string value, Event evt)
