@@ -6,6 +6,7 @@ using System.Text;
 using FreeSWITCH;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace FreeSWITCH.Helpers
 {
@@ -104,6 +105,9 @@ namespace FreeSWITCH.Helpers
     // Helper class to make ivr handling on a session work more like Dialogic and other IVR systems
     public class Ivr
     {
+        // Beeded for new method to handle DTMF Input
+        private delegate string InputCallback(string dtmf);
+
         // Instance members
         private ManagedSession _ses;
         private String _buf = String.Empty; // digit buffer
@@ -132,7 +136,7 @@ namespace FreeSWITCH.Helpers
         private String GetDtmfMatch()
         {
             String rv = null;
-            if (!_ses.IsAvailable)
+            if (!_ses.Ready())
             {
                 throw new IOException("Channel Hung up");
             }
@@ -175,12 +179,12 @@ namespace FreeSWITCH.Helpers
             }
         }
 
-        private String ProcessDtmfEvent(Char digit, TimeSpan t)
+        private String ProcessDtmfEvent(string digit)
         {
             lock (_lock)
             {
                 _captureDtmf = true;
-                _buf += digit.ToString();
+                _buf += digit.Trim();
                 //Log.WriteLine(LogLevel.Critical, "Processdtmf: {0} {1}", digit, _buf);
                 if (_breakDtmf)
                     return "break";
@@ -192,9 +196,11 @@ namespace FreeSWITCH.Helpers
         {
             _ses = session;
             _buf = String.Empty;
-            oldDtmfCallback = _ses.DtmfReceivedFunction;
-            _ses.DtmfReceivedFunction = ProcessDtmfEvent;
-            _ses.
+            //oldDtmfCallback = _ses.DtmfReceivedFunction;
+            //_ses.DtmfReceivedFunction = ProcessDtmfEvent;
+            var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(ProcessDtmfEvent);
+            session.setDTMFCallback(new SWIGTYPE_p_void(cb, false), string.Empty);
+
         }
 
         // Indexer for variables
@@ -302,7 +308,7 @@ namespace FreeSWITCH.Helpers
 
         public String GetDtmf(int minDigits, int maxDigits, String regEx = null, Char? termKey = null, Char? delKey = null, int? timeOut = null, int? interDigit = null)
         {
-            _ses.DtmfReceivedFunction = ProcessDtmfEvent;
+            //_ses.DtmfReceivedFunction = ProcessDtmfEvent;
             TermOff();
             _minDigits = minDigits;
             _maxDigits = maxDigits;
@@ -392,7 +398,7 @@ namespace FreeSWITCH.Helpers
 
         public void Shutdown()
         {
-            _ses.DtmfReceivedFunction = oldDtmfCallback;
+            //_ses.DtmfReceivedFunction = oldDtmfCallback;
         }
 
         public String GetUuid()
