@@ -1,4 +1,5 @@
 ﻿using FreeSWITCH;
+using FreeSWITCH.Helpers;
 using PluginInterface;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,32 @@ namespace SimpleXMLDP
 
         public void DispatchDialPlan(string args, ManagedSession session)
         {
-            session.Answer();
-            var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(dtmfCallback);
-            session.setDTMFCallback(new SWIGTYPE_p_void(cb, false), string.Empty);
-            session.sleep(2000, 0);
-            session.StreamFile("/testsounds/clrtest.wav", 0);
-            session.Hangup("NORMAL_CLEARING");
+            var param = args.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+            switch(param)
+            {
+                case "demo1":
+                    session.Answer();
+                    var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(dtmfCallback);
+                    session.setDTMFCallback(new SWIGTYPE_p_void(cb, false), string.Empty);
+                    session.sleep(2000, 0);
+                    session.StreamFile("/testsounds/clrtest.wav", 0);
+                    session.Hangup("NORMAL_CLEARING");
+                    break;
+
+                case "demo2":
+                    session.Answer();
+                    var i = new Ivr(session);
+                    Prompt.BaseFileDir = "/testsounds";
+                    i.FlushDtmf();
+                    session.sleep(2000, 0);
+                    i.Play("clrtest", true);
+                    i.Play(new Prompt(PromptType.NumberIterated, 1234), true);
+                    var res = i.GetDtmf(1, 1);
+                    i.FlushDtmf();
+                    i.Play(new Prompt(PromptType.NumberIterated, res), false);
+                    session.Hangup("NORMAL_CLEARING");
+                    break;
+            }
         }
 
         private string dtmfCallback(string digit)
@@ -63,6 +84,14 @@ namespace SimpleXMLDP
                     l.Add("dotnet,demo1");
                     return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
 
+                case "3333":
+                    l = new List<string>();
+                    l.Add("sleep,2000");
+                    l.Add("ring_ready");
+                    l.Add("sleep,6000");
+                    l.Add("dotnet,demo2");
+                    return new FreeSWITCH.Helpers.fsDialPlanDocument(context, l).ToXMLString();
+
                 default:
                     break;
             }
@@ -78,7 +107,7 @@ namespace SimpleXMLDP
 
         public IEnumerable<string> GetDPNames()
         {
-            return new[] { "demo1" };
+            return new[] { "demo1", "demo2" };
         }
 
         public bool Onload()
