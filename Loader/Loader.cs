@@ -33,6 +33,8 @@ namespace FreeSWITCH
             public IntPtr NativeXMLCallback;
         }
 
+        public static NativeCallbacks i_callbacks;
+
         // This is the only predefined entry point, this must match what mod_coreclr.c is looking for
         public static NativeCallbacks Load()
         {
@@ -42,12 +44,14 @@ namespace FreeSWITCH
             //PluginsContainer.LoadPluginsFromSubDirs(myLocation);
 
             // Return the marshalled callbacks for the native interfaces
-            return new NativeCallbacks
+            i_callbacks = new NativeCallbacks
             {
                 NativeAPICallback = Marshal.GetFunctionPointerForDelegate<NativeAPICallback>(NativeAPIHandler),
                 NativeAPPCallback = Marshal.GetFunctionPointerForDelegate<NativeAPPCallback>(NativeAPPHandler),
                 NativeXMLCallback = Marshal.GetFunctionPointerForDelegate<NativeXMLCallback>(NativeXMLHandler)
             };
+
+            return i_callbacks;
         }
 
         // The Managed API interface callback delegate
