@@ -192,13 +192,16 @@ namespace FreeSWITCH.Helpers
             }
         }
 
+        private InputCallback DtmfCalback = null;
+
         public Ivr(ManagedSession session)
         {
             _ses = session;
             _buf = String.Empty;
             //oldDtmfCallback = _ses.DtmfReceivedFunction;
             //_ses.DtmfReceivedFunction = ProcessDtmfEvent;
-            var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(ProcessDtmfEvent);
+            DtmfCalback = new InputCallback(ProcessDtmfEvent);
+            var cb = Marshal.GetFunctionPointerForDelegate<InputCallback>(DtmfCalback);
             session.setDTMFCallback(new SWIGTYPE_p_void(cb, false), string.Empty);
 
         }
