@@ -1,7 +1,6 @@
-# mod_coreclr
+# mod_dotnet
 
-The future home of a new Core .NET 3.1 based language plugin module.
-
+Trying to move mod_managed to .net 8+.
 
 Build Notes:
 
